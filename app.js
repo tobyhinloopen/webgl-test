@@ -73,10 +73,20 @@ function initBuffers(gl) {
    -1.0,  1.0,
     1.0, -1.0,
    -1.0, -1.0,
- ]), gl.STATIC_DRAW);
+  ]), gl.STATIC_DRAW);
+
+  const colorBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    1.0,  1.0,  1.0,  1.0,    // white
+    1.0,  0.0,  0.0,  1.0,    // red
+    0.0,  1.0,  0.0,  1.0,    // green
+    0.0,  0.0,  1.0,  1.0,    // blue
+  ]), gl.STATIC_DRAW);
 
   return {
-    position: positionBuffer,
+    positionBuffer,
+    colorBuffer
   };
 }
 
@@ -84,7 +94,7 @@ function initBuffers(gl) {
  *
  * @param {WebGLRenderingContext} gl
  * @param {RendererProgramInfo} programInfo
- * @param {{position: WebGLBuffer}} buffers
+ * @param {{positionBuffer: WebGLBuffer, colorBuffer: WebGLBuffer}} buffers
  */
 function drawScene(gl, programInfo, buffers) {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -107,10 +117,15 @@ function drawScene(gl, programInfo, buffers) {
     gl.uniformMatrix4fv(programInfo.uniforms.uModelViewMatrix, false, modelViewMatrix);
   }
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.positionBuffer);
   gl.vertexAttribPointer(programInfo.attribs.aVertexPosition, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(programInfo.attribs.aVertexPosition);
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 0);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.colorBuffer);
+  gl.vertexAttribPointer(programInfo.attribs.aVertexColor, 4, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(programInfo.attribs.aVertexColor);
+
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
 window.addEventListener("DOMContentLoaded", main);
