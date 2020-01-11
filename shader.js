@@ -1,25 +1,25 @@
-/**  @typedef {{attribs: Object.<string, number>, uniforms: Object.<string, WebGLUniformLocation>, program: WebGLProgram }} RendererProgramInfo; */
+/**  @typedef {{attribs: Object.<string, number>, uniforms: Object.<string, WebGLUniformLocation>, program: WebGLProgram }} ShaderProgramInfo; */
 
 /**
  *
  * @param {WebGLRenderingContext} gl
  * @param {string} vertPath
  * @param {string} fragPath
- * @returns {Promise.<RendererProgramInfo>}
+ * @returns {Promise.<ShaderProgramInfo>}
  */
-async function renderer__loadShaderProgram(gl, vertPath, fragPath) {
+async function shader__loadShaderProgram(gl, vertPath, fragPath) {
   const vertexShaderSource = await fetch(vertPath).then((res) => res.text());
   const fragmentShaderSource = await fetch(fragPath).then((res) => res.text());
-  return renderer__getShaderProgramLocations(gl, renderer__initShaderProgram(gl, vertexShaderSource, fragmentShaderSource));
+  return shader__getShaderProgramLocations(gl, shader__initShaderProgram(gl, vertexShaderSource, fragmentShaderSource));
 }
 
 /**
  *
  * @param {WebGLRenderingContext} gl
  * @param {WebGLProgram} program
- * @returns {RendererProgramInfo}
+ * @returns {ShaderProgramInfo}
  */
-function renderer__getShaderProgramLocations(gl, program) {
+function shader__getShaderProgramLocations(gl, program) {
   /** @type {Object.<string, number>} */
   const attribs = {};
 
@@ -51,9 +51,9 @@ function renderer__getShaderProgramLocations(gl, program) {
  * @param {string} vertexShaderSource
  * @param {string} fragmentShaderSource
  */
-function renderer__initShaderProgram(gl, vertexShaderSource, fragmentShaderSource) {
-  const vertexShader = renderer__loadShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = renderer__loadShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+function shader__initShaderProgram(gl, vertexShaderSource, fragmentShaderSource) {
+  const vertexShader = shader__loadShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+  const fragmentShader = shader__loadShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 
   const shaderProgram = gl.createProgram();
   gl.attachShader(shaderProgram, vertexShader);
@@ -72,7 +72,7 @@ function renderer__initShaderProgram(gl, vertexShaderSource, fragmentShaderSourc
  * @param {number} type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
  * @param {string} source
  */
-function renderer__loadShader(gl, type, source) {
+function shader__loadShader(gl, type, source) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
