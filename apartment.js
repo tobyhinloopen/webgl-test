@@ -3,8 +3,8 @@
   const RED = 0xFF0000;
   const BLACK = 0x000000;
 
-  const RADIUS = 10;
-  const INNER_RADIUS = 9;
+  const RADIUS = 9;
+  const INNER_RADIUS = 8;
   const DOORMAT_HALFWIDTH = 2;
   const DOORMAT_DEPTH = 1;
 

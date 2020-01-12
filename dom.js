@@ -21,3 +21,17 @@ function dom__watchWindowSize(fn) {
   notify();
   addEventListener("resize", () => notify());
 }
+
+/**
+ *
+ * @param {"mousedown"|"mousemove"|"mouseup"} eventType
+ * @param {(mouse: THREE.Vector2) => void} fn
+ */
+function dom__mouseEventListener(eventType, fn) {
+  const mouse = new THREE.Vector2();
+  addEventListener(eventType, (event) => {
+    mouse.x = (event.clientX / innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / innerHeight) * 2 + 1;
+    fn(mouse);
+  });
+}

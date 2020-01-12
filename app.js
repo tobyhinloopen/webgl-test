@@ -10,6 +10,9 @@ let camera;
 /** @type {THREE.Object3D} */
 let apartment;
 
+/** @type {THREE.Object3D} */
+let terrain;
+
 /** @type {THREE.OrbitControls} */
 let controls;
 
@@ -35,9 +38,8 @@ function init() {
 
   {
     apartment = new apartment__build(13);
-    console.log(apartment.toJSON());
 
-    const distance = 24;
+    const distance = 20;
     for (let x = 0; x < 8; x++) {
       for (let z = 0; z < 12; z++) {
         const clone = apartment.clone();
@@ -47,6 +49,20 @@ function init() {
         scene.add(clone);
       }
     }
+  }
+
+  {
+    terrain = terrain__buildTerrain(100, 100);
+    scene.add(terrain);
+    const raycaster = new THREE.Raycaster();
+    dom__mouseEventListener("mousedown", (mouse) => {
+      raycaster.setFromCamera(mouse, camera);
+      const [intersection] = raycaster.intersectObjects([terrain]);
+      if (intersection) {
+        const position = terrain__pointToGridPosition(intersection.point);
+        console.log(intersection, position);
+      }
+    });
   }
 
   dom__watchWindowSize((w, h) => {
