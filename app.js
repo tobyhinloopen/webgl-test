@@ -31,6 +31,7 @@ function init() {
   controls.update();
 
   scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x111111);
 
   {
     apartment = new apartment__build(13);
