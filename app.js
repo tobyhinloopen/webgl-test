@@ -1,69 +1,74 @@
-/** @typedef {{ render: RenderContext, downKeys: DownKeys, time: number }} AppContext */
+/** @type {THREE.WebGLRenderer} */
+let renderer;
+
+/** @type {THREE.Scene} */
+let scene;
+
+/** @type {THREE.PerspectiveCamera} */
+let camera;
 
 /**
  *
- * @param {WebGLRenderingContext} gl
- * @param {AppContext} ctx
  */
-async function init(gl, ctx) {
-  ctx.downKeys = dom__getDownKeys();
-  ctx.render = await render__init(gl);
-  ctx.time = 0;
+function init() {
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.domElement.className = "canvas";
+  document.body.querySelector("#app").appendChild(renderer.domElement);
+
+  camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+  camera.position.z = 1;
+
+  scene = new THREE.Scene();
+  geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
+  material = new THREE.MeshNormalMaterial();
+
+  mesh = new THREE.Mesh( geometry, material );
+  scene.add(mesh);
+
+  time = 0;
+
+  dom__watchWindowSize((w, h) => {
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  });
 }
 
 /**
  *
- * @param {WebGLRenderingContext} gl
- * @param {AppContext} ctx
  * @param {number} currentTime
  */
-function next(gl, ctx, currentTime) {
-  if (ctx.time === 0) {
-    ctx.time = currentTime;
-    requestAnimationFrame(next.bind(null, gl, ctx));
-    return;
+function next(currentTime) {
+  requestAnimationFrame(next);
+  time__updateDelta(currentTime);
+
+  {
+    const cameraMovement = 0.001;
+    if (dom__downKeys.keyChars.w) {
+      camera.position.y += time__delta * cameraMovement;
+    }
+    if (dom__downKeys.keyChars.s) {
+      camera.position.y -= time__delta * cameraMovement;
+    }
+    if (dom__downKeys.keyChars.a) {
+      camera.position.x -= time__delta * cameraMovement;
+    }
+    if (dom__downKeys.keyChars.d) {
+      camera.position.x += time__delta * cameraMovement;
+    }
   }
 
-  const { render, downKeys, time } = ctx;
-  const delta = currentTime - time;
-  ctx.time = currentTime;
-
-  const cameraMovement = 0.001;
-
-  if (downKeys.keyChars.w) {
-    render.cameraY += delta * cameraMovement;
-  }
-  if (downKeys.keyChars.s) {
-    render.cameraY -= delta * cameraMovement;
-  }
-  if (downKeys.keyChars.a) {
-    render.cameraX -= delta * cameraMovement;
-  }
-  if (downKeys.keyChars.d) {
-    render.cameraX += delta * cameraMovement;
+  {
+    mesh.rotation.x += 0.01;
+    mesh.rotation.y += 0.02;
   }
 
-  render__render(gl, render);
-  requestAnimationFrame(next.bind(null, gl, ctx));
+  renderer.render(scene, camera);
 }
 
-async function main() {
-  try {
-    const canvas = dom__createCanvas();
-    const gl = canvas.getContext("webgl");
-
-    if (gl === null) {
-      throw new Error("Unable to initialize WebGL. Your browser or machine may not support it.");
-    }
-
-    /** @type {AppContext} */
-    const ctx = {};
-    await init(gl, ctx);
-    requestAnimationFrame(next.bind(null, gl, ctx));
-  } catch (error) {
-    alert(error.message);
-    throw error;
-  }
+function main() {
+  init();
+  requestAnimationFrame(next);
 }
 
 window.addEventListener("DOMContentLoaded", main);

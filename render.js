@@ -58,7 +58,8 @@ function render__render(gl, render) {
 
   {
     const modelViewMatrix = mat4.create();
-    mat4.rotateX(modelViewMatrix, modelViewMatrix, 10 * DEG2RAD);
+    mat4.rotateX(modelViewMatrix, modelViewMatrix, 35.264 * DEG2RAD);
+    mat4.rotateZ(modelViewMatrix, modelViewMatrix, 45 * DEG2RAD);
     mat4.translate(modelViewMatrix, modelViewMatrix, new Float32Array([render.cameraX, render.cameraY, -7.0]));
     gl.uniformMatrix4fv(render.programInfo.uniforms.uModelViewMatrix, false, modelViewMatrix);
   }

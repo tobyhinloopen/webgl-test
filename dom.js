@@ -1,36 +1,23 @@
-/** @typedef {{ keyChars: { [key: string]: boolean }, keyCodes: { [key: string]: boolean } }} DownKeys */
+/** @type {{ keyChars: { [key: string]: boolean }, keyCodes: { [key: string]: boolean } }} DownKeys */
+const dom__downKeys = { keyChars: {}, keyCodes: {} };
+
+addEventListener("keydown", (event) => {
+  dom__downKeys.keyChars[event.key] = true;
+  dom__downKeys.keyCodes[event.keyCode] = true;
+});
+
+addEventListener("keyup", (event) => {
+  dom__downKeys.keyChars[event.key] = false;
+  dom__downKeys.keyCodes[event.keyCode] = false;
+});
 
 /**
- *
+ * Calls fn with the size of the window right away, and after the window has
+ * been resized.
+ * @param {(width: number, height: number) => void} fn
  */
-function dom__createCanvas() {
-  const container = document.getElementById("app");
-  const canvas = document.createElement("canvas");
-  canvas.width = 1280;
-  canvas.height = 720;
-  canvas.className = "canvas";
-  container.appendChild(canvas);
-  return canvas;
-}
-
-/**
- *
- */
-function dom__getDownKeys() {
-  /** @type {{ [key: string]: boolean }} */
-  const keyChars = {};
-  /** @type {{ [key: string]: boolean }} */
-  const keyCodes = {};
-
-  window.addEventListener("keydown", (event) => {
-    keyChars[event.key] = true;
-    keyCodes[event.keyCode] = true;
-  });
-
-  window.addEventListener("keyup", (event) => {
-    keyChars[event.key] = false;
-    keyCodes[event.keyCode] = false;
-  });
-
-  return { keyChars, keyCodes };
+function dom__watchWindowSize(fn) {
+  const notify = () => fn(innerWidth, innerHeight);
+  notify();
+  addEventListener("resize", () => notify());
 }
