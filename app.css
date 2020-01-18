@@ -16,3 +16,9 @@ body, html {
   margin: auto;
   background-color: #f0f;
 }
+
+.gui {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
