@@ -4,30 +4,10 @@
    * @param {HTMLElement} element
    */
   function injectTopLeftGui(element) {
-    {
-      const button = document.createElement("button");
-      button.className = "btn";
-      button.id = "gui__orbit-controls";
-      button.textContent = "Orbit Controls";
-      element.appendChild(button);
-    }
-    {
-      const button = document.createElement("button");
-      button.className = "btn";
-      button.id = "gui__build-roads";
-      button.textContent = "Build Roads";
-      element.appendChild(button);
-    }
-    {
-      element.appendChild(document.createElement("br"));
-    }
-    {
-      const label = document.createElement("span");
-      label.id = "gui__mouse-label"
-      label.className = "label label-primary";
-      label.textContent = "";
-      element.appendChild(label);
-    }
+    dom__appendElement(element, "button", { class: "btn", id: "gui__orbit-controls" }, { textContent: "Orbit Controls" });
+    dom__appendElement(element, "button", { class: "btn", id: "gui__build-roads" }, { textContent: "Build Roads" });
+    dom__appendElement(element, "br");
+    dom__appendElement(element, "span", { id: "gui__mouse-label", class: "label label-primary" });
   }
 
   /**
@@ -35,7 +15,6 @@
    * @param {HTMLElement} element
    */
   function injectTopRightGui(element) {
-
   }
 
   /**

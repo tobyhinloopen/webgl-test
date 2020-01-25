@@ -58,8 +58,20 @@ function init() {
 
   camera.position.set(160, 50, 160);
   camera.lookAt(0, 0, 0);
+
   orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
   orbitControls.update();
+
+  const cameraState = storage__get("camera");
+  if (cameraState) {
+    try {
+      camera.matrix.fromArray(cameraState);
+      camera.matrix.decompose(camera.position, camera.quaternion, camera.scale);
+    } catch (error) {
+      console.error("Failed to deserialize camera", error);
+      storage__remove("camera");
+    }
+  }
 
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x111111);
@@ -78,6 +90,13 @@ function init() {
   //     }
   //   }
   // }
+
+  const roadManager = new RoadManager();
+  scene.add(roadManager.object);
+
+  roadManager.addGridAlignedRoad(new THREE.Vector2(0, 0), new THREE.Vector2(10, 0), 2);
+  roadManager.addGridAlignedRoad(new THREE.Vector2(10, 0), new THREE.Vector2(10, 10), 2);
+  roadManager.rebuildRoads();
 
   app.appendChild(gui__create());
 
@@ -186,6 +205,9 @@ function init() {
     }
     camera.updateProjectionMatrix();
   });
+
+  window.setInterval(() => storage__set("camera", camera.matrix.toArray()), 100);
+  window.addEventListener("unload", () => storage__set("camera", camera.matrix.toArray()));
 }
 
 /**
@@ -195,24 +217,7 @@ function init() {
 function next(currentTime) {
   requestAnimationFrame(next);
   time__updateDelta(currentTime);
-
-  {
-    const cameraMovement = 0.001;
-    if (dom__downKeys.keyChars.w) {
-      camera.position.y += time__delta * cameraMovement;
-    }
-    if (dom__downKeys.keyChars.s) {
-      camera.position.y -= time__delta * cameraMovement;
-    }
-    if (dom__downKeys.keyChars.a) {
-      camera.position.x -= time__delta * cameraMovement;
-    }
-    if (dom__downKeys.keyChars.d) {
-      camera.position.x += time__delta * cameraMovement;
-    }
-    orbitControls.update();
-  }
-
+  orbitControls.update();
   renderer.render(scene, camera);
 }
 

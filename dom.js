@@ -35,3 +35,47 @@ function dom__mouseEventListener(eventType, fn) {
     fn(mouse);
   });
 }
+
+/**
+ *
+ * @param {HTMLElement} parent
+ * @param {string} name
+ * @param {Record<string, string>} attributes
+ * @param {Partial<HTMLElement>} props
+ */
+function dom__appendElement(parent, name, attributes, props) {
+  const elem = dom__createElement(name, attributes, props);
+  parent.appendChild(elem);
+  return elem;
+}
+
+/**
+ *
+ * @param {string} name
+ * @param {Record<string, string>} attributes
+ * @param {Partial<HTMLElement>} props
+ */
+function dom__createElement(name, attributes, props) {
+  /** @type {HTMLElement} */
+  const elem = document.createElement(name);
+  if (attributes) {
+    for (const key in attributes) {
+      elem.setAttribute(key, attributes[key]);
+    }
+  }
+  if (props) {
+    for (const key in props) {
+      elem[key] = props[key];
+    }
+  }
+  return elem;
+}
+
+function dom__injectScript(src) {
+  return new Promise((resolve, reject) => {
+    const script = dom__appendElement(document.body, "script", { src });
+    script.addEventListener("load", resolve);
+    script.addEventListener('error', (error) => reject(error));
+    script.addEventListener('abort', () => reject('Script loading aborted.'));
+  });
+}

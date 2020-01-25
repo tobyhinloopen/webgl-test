@@ -1,0 +1,24 @@
+.gui__top-left {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.gui__top-right {
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+
+
+.gui__bottom-left {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
+.gui__bottom-right {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
